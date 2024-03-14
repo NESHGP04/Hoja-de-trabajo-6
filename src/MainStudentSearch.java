@@ -1,3 +1,10 @@
+/*
+ * Marinés Garcia - 23391
+ * Kevin Villagrán - 23584
+ * Hoja 6
+ */
+
+
 import java.util.Scanner;
 import java.util.HashMap;
 import java.util.List;
