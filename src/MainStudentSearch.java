@@ -1,44 +1,83 @@
+import java.util.Scanner;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 
 public class MainStudentSearch {
     public static void main(String[] args) {
-        // Supongamos que el usuario elige utilizar un TreeMap (esto podría provenir de una entrada de usuario)
-        int mapType = MapFactory.TREEMAP_TYPE;
-        
-        // Crear StudentSearch para la clave 'nacionalidad' con un hash orgánico
-        StudentSearch searchByCountry = new StudentSearch(mapType, Student::getCountry, true);
+        Scanner scanner = new Scanner(System.in);
 
-        // Crear StudentSearch para la clave 'correo electrónico' que no es orgánico
-        StudentSearch searchByEmail = new StudentSearch(mapType, Student::getEmail, false);
+        // Solicitar al usuario que seleccione la implementación de Map
+        System.out.println("Seleccione la implementación de Map:");
+        System.out.println("1) HashMap");
+        System.out.println("2) TreeMap");
+        System.out.println("3) LinkedHashMap");
+        int mapChoice = Integer.parseInt(scanner.nextLine()) - 1;
 
-        // Añadir algunos estudiantes al buscador
-        Student johnDoe = new Student("John Doe", "123456789", "john.doe@example.com", "12345", "USA");
-        Student janeSmith = new Student("Jane Smith", "987654321", "jane.smith@example.com", "54321", "USA");
-        Student pedroGonzalez = new Student("Pedro Gonzalez", "555555555", "pedro.g@example.com", "11111", "Spain");
+        // Solicitar al usuario que seleccione la función hash
+        System.out.println("Seleccione la función hash:");
+        System.out.println("1) MD5");
+        System.out.println("2) SHA-1");
+        System.out.println("3) Orgánico (devuelve el mismo dato)");
+        int hashFunctionChoice = Integer.parseInt(scanner.nextLine()) - 1;
 
-        searchByCountry.addStudent(johnDoe);
-        searchByCountry.addStudent(janeSmith);
-        searchByCountry.addStudent(pedroGonzalez);
+        // Crear la función hash según la elección del usuario
+        IHash hashFunction = FactoryHash.getHashMap(hashFunctionChoice);
 
-        searchByEmail.addStudent(johnDoe);
-        searchByEmail.addStudent(janeSmith);
-        // Nota: para la demostración, asegúrate de que los correos electrónicos sean únicos.
-        // El siguiente estudiante tiene un correo electrónico que ya existe, y la llave no orgánica no debería permitir colisiones
-        searchByEmail.addStudent(new Student("Pedro Gonzalez", "555555555", "john.doe@example.com", "11111", "Spain"));
+        // Leer los estudiantes del archivo JSON
+        String filePath = "data/estudiantes.json.json";
+        List<Student> students = StudentReader.readStudentsFromFile(filePath);
 
-        // Buscar estudiantes por país
-        List<Student> studentsInUSA = searchByCountry.searchByCountry("USA");
-        // Buscar estudiantes por correo electrónico
-        Student studentWithEmail = searchByEmail.searchByKey("john.doe@example.com");
+        // Crear el mapa utilizando MapFactory
+        Map<String, List<Student>> studentMapOrganic = MapFactory.getMap(mapChoice);
+        Map<String, Student> studentMapNonOrganic = new HashMap<>();
 
-        // Imprimir los resultados de la búsqueda por país
-        System.out.println("Students in USA:");
-        for (Student student : studentsInUSA) {
-            System.out.println(student);
+        // Seleccionar el dato para generar la llave, en este caso, el número de teléfono
+        Function<Student, String> phoneKeyExtractor = student -> hashFunction.hash(student.getPhone());
+        // Seleccionar el dato para generar la llave, en este caso, el país
+        Function<Student, String> countryKeyExtractor = Student::getCountry;
+
+        // Crear el StudentSearch para manejar tanto la búsqueda orgánica como la no orgánica
+        // Aquí asumimos que la búsqueda por nacionalidad será orgánica y la otra no
+        StudentSearch studentSearchOrganic = new StudentSearch(studentMapOrganic, countryKeyExtractor, hashFunctionChoice == FactoryHash.ORGANICO_Hash);
+        StudentSearch studentSearchNonOrganic = new StudentSearch(new HashMap<>(), phoneKeyExtractor, false);
+
+        // Añadir estudiantes a cada StudentSearch según el tipo de búsqueda
+        students.forEach(student -> {
+            if (hashFunctionChoice == FactoryHash.ORGANICO_Hash) {
+                studentSearchOrganic.addStudent(student);
+            } else {
+                studentSearchNonOrganic.addStudent(student);
+            }
+        });
+
+        // Implementar las opciones de búsqueda
+        System.out.println("Ingrese la operación deseada:");
+        System.out.println("1) Buscar estudiante por llave única");
+        System.out.println("2) Buscar estudiantes por nacionalidad");
+        int searchChoice = Integer.parseInt(scanner.nextLine());
+
+        if (searchChoice == 1) {
+            System.out.println("Ingrese la llave única (Número de teléfono en este caso):");
+            String key = scanner.nextLine();
+            Student foundStudent = studentSearchNonOrganic.searchByKey(hashFunction.hash(key));
+            System.out.println(foundStudent != null ? foundStudent : "Estudiante no encontrado.");
+        } else if (searchChoice == 2) {
+            if (!studentSearchOrganic.isOrganic()) {
+                System.out.println("No se puede buscar por nacionalidad en una búsqueda no orgánica.");
+            } else {
+                System.out.println("Ingrese la nacionalidad:");
+                String country = scanner.nextLine();
+                List<Student> studentsByCountry = studentSearchOrganic.searchByCountry(country);
+                if (studentsByCountry.isEmpty()) {
+                    System.out.println("No se encontraron estudiantes de esta nacionalidad.");
+                } else {
+                    studentsByCountry.forEach(System.out::println);
+                }
+            }
+        } else {
+            System.out.println("Opción no válida.");
         }
-
-        // Imprimir el resultado de la búsqueda por correo electrónico
-        System.out.println("\nEstudiante con el correo 'john.doe@example.com':");
-        System.out.println(studentWithEmail);
     }
 }
