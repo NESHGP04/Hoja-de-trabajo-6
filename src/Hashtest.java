@@ -1,10 +1,6 @@
-package test;
+
 import static org.junit.Assert.*;
 import org.junit.Test;
-
-import MD5HashMap;
-import OrganicoHashMap;
-import SHA1HashMap;
 
 public class Hashtest {
     @Test

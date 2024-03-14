@@ -1,8 +1,6 @@
-package test;
+
 
 import org.junit.Test;
-
-import MapFactory;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
