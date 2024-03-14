@@ -1,4 +1,4 @@
-public class Estudiante {
+public class Student {
     private String name;
     private String phone;
     private String email;
@@ -6,7 +6,7 @@ public class Estudiante {
     private String country;
 
     // Constructor
-    public Estudiante(String name, String phone, String email, String postalZip, String country) {
+    public Student(String name, String phone, String email, String postalZip, String country) {
         this.name = name;
         this.phone = phone;
         this.email = email;
@@ -55,5 +55,15 @@ public class Estudiante {
 
     public void setCountry(String country) {
         this.country = country;
+    }
+
+    @Override
+    public String toString() {
+        return "Student:" +
+                "\nName: " + name +
+                "\nPhone: " + phone +
+                "\nEmail: " + email +
+                "\nPostal Zip: " + postalZip +
+                "\nCountry: " + country + "\n";
     }
 }

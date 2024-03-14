@@ -12,6 +12,5 @@ public class FactoryHash<K,V> {
             case ORGANICO_Hash: return new OrganicoHashMap();
             default : return new MD5HashMap();
         }
-    }
-    
+    }    
 }
