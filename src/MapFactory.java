@@ -9,14 +9,14 @@ public class MapFactory {
     public static final int TREEMAP_TYPE = 1;
     public static final int LINKEDHASH_MAP = 2;
     
-    public static Map getMap(int type) {
+    public static <K, V> Map<K, V> getMap(int type) {
         switch (type) {
             case HASHMAP_TYPE:
-                return new HashMap();
+                return new HashMap<>();
             case TREEMAP_TYPE:
-                return new TreeMap();
+                return new TreeMap<>();
             case LINKEDHASH_MAP:
-                return new LinkedHashMap();
+                return new LinkedHashMap<>();
             default:
                 throw new IllegalArgumentException("Tipo de mapa no soportado.");
         }
