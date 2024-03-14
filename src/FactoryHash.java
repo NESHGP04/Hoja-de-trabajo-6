@@ -1,4 +1,4 @@
-package src;
+
 public class FactoryHash<K,V> {
 
     public static final int MD5_HASH = 0;
