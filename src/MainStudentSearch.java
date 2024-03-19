@@ -6,9 +6,9 @@
 
 
 import java.util.Scanner;
+import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
 
 public class MainStudentSearch {
@@ -37,8 +37,7 @@ public class MainStudentSearch {
         List<Student> students = StudentReader.readStudentsFromFile(filePath);
 
         // Crear el mapa utilizando MapFactory
-        Map<String, List<Student>> studentMapOrganic = MapFactory.getMap(mapChoice);
-        Map<String, Student> studentMapNonOrganic = new HashMap<>();
+        AbstractMap<String, List<Student>> studentMapOrganic = MapFactory.getMap(mapChoice);
 
         // Seleccionar el dato para generar la llave, en este caso, el número de teléfono
         Function<Student, String> phoneKeyExtractor = student -> hashFunction.hash(student.getPhone());
@@ -48,7 +47,7 @@ public class MainStudentSearch {
         // Crear el StudentSearch para manejar tanto la búsqueda orgánica como la no orgánica
         // Aquí asumimos que la búsqueda por nacionalidad será orgánica y la otra no
         StudentSearch studentSearchOrganic = new StudentSearch(studentMapOrganic, countryKeyExtractor, hashFunctionChoice == FactoryHash.ORGANICO_Hash);
-        StudentSearch studentSearchNonOrganic = new StudentSearch(new HashMap<>(), phoneKeyExtractor, false);
+        StudentSearch studentSearchNonOrganic = new StudentSearch(new HashMap<>(), phoneKeyExtractor, hashFunctionChoice == FactoryHash.ORGANICO_Hash);
 
         // Añadir estudiantes a cada StudentSearch según el tipo de búsqueda
         students.forEach(student -> {

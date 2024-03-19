@@ -1,7 +1,7 @@
+import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.TreeMap;
 import java.util.LinkedHashMap;
-import java.util.Map;
 
 public class MapFactory {
     
@@ -9,14 +9,14 @@ public class MapFactory {
     public static final int TREEMAP_TYPE = 1;
     public static final int LINKEDHASH_MAP = 2;
     
-    public static <K, V> Map<K, V> getMap(int type) {
+    public static <K, V> AbstractMap<K, V> getMap(int type) {
         switch (type) {
             case HASHMAP_TYPE:
-                return new HashMap<>();
+                return new HashMap<K, V>();
             case TREEMAP_TYPE:
-                return new TreeMap<>();
+                return new TreeMap<K, V>();
             case LINKEDHASH_MAP:
-                return new LinkedHashMap<>();
+                return new LinkedHashMap<K, V>();
             default:
                 throw new IllegalArgumentException("Tipo de mapa no soportado.");
         }

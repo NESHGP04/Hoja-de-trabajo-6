@@ -1,16 +1,16 @@
 import java.util.List;
-import java.util.Map;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.function.Function;
 
 public class StudentSearch {
-    private Map<String, List<Student>> studentMapOrganic;
-    private Map<String, Student> studentMapNonOrganic;
+    private AbstractMap<String, List<Student>> studentMapOrganic;
+    private AbstractMap<String, Student> studentMapNonOrganic;
     private Function<Student, String> keyExtractor;
     private boolean isOrganic;
 
-    public StudentSearch(Map<String, List<Student>> studentMap, Function<Student, String> keyExtractor, boolean isOrganic) {
+    public StudentSearch(AbstractMap<String, List<Student>> studentMap, Function<Student, String> keyExtractor, boolean isOrganic) {
         this.isOrganic = isOrganic;
         if (isOrganic) {
             // Si es orgánico, utilizamos el MapFactory para obtener la implementación de Map adecuada
